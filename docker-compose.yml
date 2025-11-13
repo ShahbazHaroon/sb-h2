@@ -1,0 +1,12 @@
+services:
+  sb-h2:
+    build:
+      context: . # Project root as context
+      dockerfile: Dockerfile
+    image: sb-h2
+    container_name: sb-h2-container
+    ports:
+      - "8080:8080"  # Expose Spring Boot API externally
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+    restart: unless-stopped
