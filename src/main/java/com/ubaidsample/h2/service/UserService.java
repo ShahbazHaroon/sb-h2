@@ -36,60 +36,60 @@ public class UserService {
     public UserResponseDTO save(UserRequestDTO request) {
         log.info("UserService -> save() called");
         if (request == null) {
-            throw new MissingInputException("User Info must not be null");
+            throw new MissingInputException("Info must not be null");
         }
-        User user = modelMapper.map(request, User.class);
-        User savedUser = repository.save(user);
-        return modelMapper.map(savedUser, UserResponseDTO.class);
+        User entity = modelMapper.map(request, User.class);
+        User response = repository.save(entity);
+        return modelMapper.map(response, UserResponseDTO.class);
     }
 
     @Transactional(readOnly = true)
     public List<UserResponseDTO> findAll() {
         log.info("UserService -> findAll() called");
-        List<User> users = repository.findAll();
-        if (users.isEmpty()) {
-            throw new ResourceNotFoundException("No users found in the database");
+        List<User> response = repository.findAll();
+        if (response.isEmpty()) {
+            throw new ResourceNotFoundException("Nothing found in the database");
         }
-        List<UserResponseDTO> response = MapperUtil.mapAll(users, UserResponseDTO.class);
-        return response;
+        List<UserResponseDTO> repositoryResponse = MapperUtil.mapAll(response, UserResponseDTO.class);
+        return repositoryResponse;
     }
 
     @Transactional(readOnly = true)
     public UserResponseDTO findById(Long id) {
         log.info("UserService -> findById() called");
         if (id == null) {
-            throw new MissingInputException("User ID must not be null");
+            throw new MissingInputException("ID must not be null");
         }
-        User user = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        return modelMapper.map(user, UserResponseDTO.class);
+        User response = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Nothing found in the database"));
+        return modelMapper.map(response, UserResponseDTO.class);
     }
 
     @Transactional
     public UserResponseDTO update(Long id, UserRequestDTO request) {
         log.info("UserService -> update() called");
         if (id == null || request == null) {
-            throw new MissingInputException("User ID and update info must not be null");
+            throw new MissingInputException("ID and update info must not be null");
         }
-        User user = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        user.setUserName(request.getUserName());
-        user.setEmail(request.getEmail());
+        User response = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Nothing found in the database"));
+        response.setUserName(request.getUserName());
+        response.setEmail(request.getEmail());
         if (request.getPassword() != null) {
             user.setPassword((request.getPassword()));
         }
-        User updatedUser = repository.save(user);
-        return modelMapper.map(updatedUser, UserResponseDTO.class);
+        User repositoryResponse = repository.save(response);
+        return modelMapper.map(repositoryResponse, UserResponseDTO.class);
     }
 
     @Transactional
     public UserResponseDTO partialUpdate(Long id, Map<String, Object> updates) {
         log.info("UserService -> partialUpdate() called");
         if (id == null || updates == null || updates.isEmpty()) {
-            throw new MissingInputException("User ID and update info must not be null or empty");
+            throw new MissingInputException("ID and update info must not be null or empty");
         }
         User user = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Nothing found in the database"));
         updates.forEach((key, value) -> {
             switch (key) {
                 case "userName":
@@ -105,18 +105,18 @@ public class UserService {
                     throw new IllegalArgumentException("Invalid field: " + key);
             }
         });
-        User updatedUser = repository.save(user);
-        return modelMapper.map(updatedUser, UserResponseDTO.class);
+        User repositoryResponse = repository.save(user);
+        return modelMapper.map(repositoryResponse, UserResponseDTO.class);
     }
 
     @Transactional
     public void delete(Long id) {
         log.info("UserService -> delete() called");
         if (id == null) {
-            throw new MissingInputException("User ID must not be null");
+            throw new MissingInputException("ID must not be null");
         }
         if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("User not found");
+            throw new ResourceNotFoundException("Nothing found in the database");
         }
         repository.deleteById(id);
     }
