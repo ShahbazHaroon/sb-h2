@@ -47,13 +47,10 @@ public class UserService {
     public List<UserResponseDTO> findAll() {
         log.info("UserService -> findAll() called");
         List<User> users = repository.findAll();
-        System.out.println("MAHROSH"+users);
         if (users.isEmpty()) {
             throw new ResourceNotFoundException("No users found in the database");
         }
         List<UserResponseDTO> response = MapperUtil.mapAll(users, UserResponseDTO.class);
-        log.info("Mapped DTOs: {}", response);
-
         return response;
     }
 
