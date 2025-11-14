@@ -75,7 +75,8 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Nothing found in the database"));
         response.setUserName(request.getUserName());
         response.setEmail(request.getEmail());
-        if (request.getPassword() != null) {
+        // Update password only if provided
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
             user.setPassword((request.getPassword()));
         }
         User repositoryResponse = repository.save(response);
@@ -88,24 +89,24 @@ public class UserService {
         if (id == null || updates == null || updates.isEmpty()) {
             throw new MissingInputException("ID and update info must not be null or empty");
         }
-        User user = repository.findById(id)
+        User response = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Nothing found in the database"));
         updates.forEach((key, value) -> {
             switch (key) {
                 case "userName":
-                    user.setUserName((String) value);
+                    response.setUserName((String) value);
                     break;
                 case "email":
-                    user.setEmail((String) value);
+                    response.setEmail((String) value);
                     break;
                 case "password":
-                    user.setPassword(((String) value));
+                    response.setPassword(((String) value));
                     break;
                 default:
                     throw new IllegalArgumentException("Invalid field: " + key);
             }
         });
-        User repositoryResponse = repository.save(user);
+        User repositoryResponse = repository.save(response);
         return modelMapper.map(repositoryResponse, UserResponseDTO.class);
     }
 
