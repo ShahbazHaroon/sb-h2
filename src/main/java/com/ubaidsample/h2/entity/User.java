@@ -19,14 +19,14 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Comment("Stores user information")
 @Table(name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_users_email", columnNames = "email"),
                 @UniqueConstraint(name = "uk_users_username", columnNames = "user_name")
         })
-@NoArgsConstructor
-@AllArgsConstructor
-@Comment("Stores user information")
 public class User implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -38,14 +38,14 @@ public class User implements Serializable {
     private Long userId;
 
     @Column(name = "user_name", nullable = false, length = 50)
-	@Comment("User given name")
+	@Comment("User name")
     private String userName;
 
     @Column(name = "email", nullable = false, length = 50)
-	@Comment("User given email")
+	@Comment("User email")
     private String email;
 
     @Column(name = "password", nullable = false, length = 255)
-	@Comment("User given password")
+	@Comment("User password")
     private String password;
 }
