@@ -61,7 +61,7 @@ public class UserService {
             throw new MissingInputException("ID must not be null");
         }
         User response = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Nothing found in the database"));
+                .orElseThrow(() -> new ResourceNotFoundException("Nothing found in the database with id " + id));
         return modelMapper.map(response, UserResponseDTO.class);
     }
 
@@ -72,7 +72,7 @@ public class UserService {
             throw new MissingInputException("ID and update info must not be null");
         }
         User response = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Nothing found in the database"));
+                .orElseThrow(() -> new ResourceNotFoundException("Nothing found in the database with id " + id));
         response.setUserName(request.getUserName());
         response.setEmail(request.getEmail());
         // Update password only if provided
@@ -90,7 +90,7 @@ public class UserService {
             throw new MissingInputException("ID and update info must not be null or empty");
         }
         User response = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Nothing found in the database"));
+                .orElseThrow(() -> new ResourceNotFoundException("Nothing found in the database with id " + id));
         updates.forEach((key, value) -> {
             switch (key) {
                 case "userName":
@@ -117,7 +117,7 @@ public class UserService {
             throw new MissingInputException("ID must not be null");
         }
         if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("Nothing found in the database");
+            throw new ResourceNotFoundException("Nothing found in the database with id " + id);
         }
         repository.deleteById(id);
     }
