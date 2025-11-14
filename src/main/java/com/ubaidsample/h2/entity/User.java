@@ -24,8 +24,8 @@ import java.io.Serializable;
 @Comment("Stores user information")
 @Table(name = "users",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uk_users_email", columnNames = "email"),
-                @UniqueConstraint(name = "uk_users_username", columnNames = "user_name")
+                @UniqueConstraint(name = "uk_user_email", columnNames = "email"),
+                @UniqueConstraint(name = "uk_user_username", columnNames = "user_name")
         })
 public class User implements Serializable {
 	
