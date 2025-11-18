@@ -69,7 +69,7 @@ public class UserController {
     @Operation(summary = "Update user by ID", description = "Updates a user profile")
     @ApiResponse(responseCode = "200", description = "User updated")
     @PatchMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> partialUpdate(@PathVariable Long id, @Valid @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<UserResponseDTO> partialUpdate(@PathVariable Long id, @Valid @RequestBody UserPartialUpdateRequestDTO updates) {
         log.info("UserController -> partialUpdate() called with ID: {}", id);
         var response = service.partialUpdate(id, updates);
         return ResponseEntity.ok(response);
