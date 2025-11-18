@@ -38,20 +38,28 @@ public class UserService {
         if (request == null) {
             throw new MissingInputException("Info must not be null");
         }
+        // Convert the DTO to the entity
         User entity = modelMapper.map(request, User.class);
+        // Save the new user
         User response = repository.save(entity);
+        // Convert the entity to the DTO
         return modelMapper.map(response, UserResponseDTO.class);
     }
 
     @Transactional(readOnly = true)
     public List<UserResponseDTO> findAll() {
         log.info("UserService -> findAll() called");
-        List<User> response = repository.findAll();
-        if (response.isEmpty()) {
+        List<User> entity = repository.findAll();
+        if (entity.isEmpty()) {
             throw new ResourceNotFoundException("Nothing found in the database");
         }
-        List<UserResponseDTO> repositoryResponse = MapperUtil.mapAll(response, UserResponseDTO.class);
-        return repositoryResponse;
+        return entity.stream()
+                .map(user -> {
+                    // Convert the entity to the DTO
+                    UserResponseDTO dto = MapperUtil.map(user, UserResponseDTO.class);
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -60,9 +68,11 @@ public class UserService {
         if (id == null) {
             throw new MissingInputException("ID must not be null");
         }
-        User response = repository.findById(id)
+        // Convert the entity to the DTO
+        User entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Nothing found in the database with id " + id));
-        return modelMapper.map(response, UserResponseDTO.class);
+        // Convert the entity to the DTO
+        return modelMapper.map(entity, UserResponseDTO.class);
     }
 
     @Transactional
@@ -71,42 +81,44 @@ public class UserService {
         if (id == null || request == null) {
             throw new MissingInputException("ID and update info must not be null");
         }
-        User response = repository.findById(id)
+        // Fetch existing user
+        User entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Nothing found in the database with id " + id));
-        response.setUserName(request.getUserName());
-        response.setEmail(request.getEmail());
+        // Update fields
+        entity.setUserName(request.getUserName());
+        entity.setEmail(request.getEmail());
         // Update password only if provided
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
-            user.setPassword((request.getPassword()));
+            entity.setPassword((request.getPassword()));
         }
-        User repositoryResponse = repository.save(response);
+        entity.setDateOfBirth(request.getDateOfBirth());
+        entity.setDateOfLeaving(request.getDateOfLeaving());
+        entity.setPostalCode(request.getPostalCode());
+        // Save updated user
+        User repositoryResponse = repository.save(entity);
+        // Convert the entity to the DTO
         return modelMapper.map(repositoryResponse, UserResponseDTO.class);
     }
 
     @Transactional
-    public UserResponseDTO partialUpdate(Long id, Map<String, Object> updates) {
+    public UserResponseDTO partialUpdate(Long id, UserPartialUpdateRequestDTO updates) {
         log.info("UserService -> partialUpdate() called");
-        if (id == null || updates == null || updates.isEmpty()) {
-            throw new MissingInputException("ID and update info must not be null or empty");
+        if (id == null || updates == null) {
+            throw new MissingInputException("ID and update info must not be null");
         }
-        User response = repository.findById(id)
+        // Fetch existing user
+        User entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Nothing found in the database with id " + id));
-        updates.forEach((key, value) -> {
-            switch (key) {
-                case "userName":
-                    response.setUserName((String) value);
-                    break;
-                case "email":
-                    response.setEmail((String) value);
-                    break;
-                case "password":
-                    response.setPassword(((String) value));
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid field: " + key);
-            }
-        });
+        // Apply updates
+        updates.getUserName().ifPresent(entity::setUserName);
+        updates.getEmail().ifPresent(entity::setEmail);
+        updates.getPassword().ifPresent(entity::setPassword);
+        updates.getDateOfBirth().ifPresent(entity::setDateOfBirth);
+        updates.getDateOfLeaving().ifPresent(entity::setDateOfLeaving);
+        updates.getPostalCode().ifPresent(entity::setPostalCode);
+        // Save updated user
         User repositoryResponse = repository.save(response);
+        // Convert the entity to the DTO
         return modelMapper.map(repositoryResponse, UserResponseDTO.class);
     }
 
