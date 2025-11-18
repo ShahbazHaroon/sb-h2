@@ -25,4 +25,13 @@ public class UserResponseDTO {
 
     @JsonProperty("email")
     private String email;
+
+    @JsonProperty("date_of_birth")
+    private LocalDate dateOfBirth;
+
+    @JsonProperty("date_of_leaving")
+    private LocalDate dateOfLeaving;
+
+    @JsonProperty("postal_code")
+    private Integer postalCode;
 }
