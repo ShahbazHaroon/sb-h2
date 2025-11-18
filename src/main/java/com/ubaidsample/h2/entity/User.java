@@ -48,4 +48,16 @@ public class User implements Serializable {
     @Column(name = "password", nullable = false, length = 255)
 	@Comment("User password")
     private String password;
+
+    @Column(name = "date_of_birth", nullable = false)
+	@Comment("User dateOfBirth")
+	private LocalDate dateOfBirth;
+
+	@Column(name = "date_of_leaving", nullable = false)
+	@Comment("User dateOfLeaving")
+	private LocalDate dateOfLeaving;
+
+	@Column(name = "postal_code", nullable = false)
+	@Comment("User postalCode")
+	private Integer postalCode;
 }
