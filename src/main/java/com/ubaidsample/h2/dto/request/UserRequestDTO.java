@@ -29,7 +29,6 @@ public class UserRequestDTO {
 
     @NotBlank
     @Email
-    @Size(min = 4, max = 50)
     @JsonProperty("email")
     private String email;
 
@@ -37,4 +36,20 @@ public class UserRequestDTO {
     @Size(min = 4, max = 255)
     @JsonProperty("password")
     private String password;
+
+    @NotNull
+    @Past
+    @JsonProperty("date_of_birth")
+    private LocalDate dateOfBirth;
+
+    @NotNull
+    @Future
+    @JsonProperty("date_of_leaving")
+    private LocalDate dateOfLeaving;
+
+    @NotNull
+    @Digits(integer = 5, fraction = 0)
+    @Positive
+    @JsonProperty("postal_code")
+    private Integer postalCode;
 }
