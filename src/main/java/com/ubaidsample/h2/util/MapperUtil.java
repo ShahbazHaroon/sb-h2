@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+
 @Component
 public class MapperUtil {
 
@@ -34,7 +35,6 @@ public class MapperUtil {
     }
 
     public static <S, D> D map(final S source, Class<D> destination) {
-        //modelMapper.validate();
         return modelMapper.map(source, destination);
     }
 

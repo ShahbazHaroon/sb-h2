@@ -8,19 +8,24 @@
 package com.ubaidsample.h2.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserRequestDTO {
+
+    @NotBlank
+    @Size(min = 4, max = 50)
+    @JsonProperty("idempotency_key")
+    private String idempotencyKey;
 
     @NotBlank
     @Size(min = 4, max = 50)

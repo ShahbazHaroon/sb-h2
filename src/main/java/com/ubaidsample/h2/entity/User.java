@@ -7,28 +7,31 @@
 
 package com.ubaidsample.h2.entity;
 
+import com.ubaidsample.h2.dto.common.AuditHistoryDTO;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Comment;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
 
-@Getter
-@Setter
+@Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Comment("Stores user information")
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_user_email", columnNames = "email"),
-                @UniqueConstraint(name = "uk_user_username", columnNames = "user_name")
+                @UniqueConstraint(name = "uk_user_username", columnNames = "user_name"),
+				@UniqueConstraint(name = "uk_user_idempotency_key", columnNames = "idempotency_key")
         })
 public class User implements Serializable {
 	
+	@Serial
 	private static final long serialVersionUID = 1L;
 
     @Id
@@ -36,6 +39,10 @@ public class User implements Serializable {
     @Column(name= "user_id", nullable = false, updatable = false)
 	@Comment("Unique identifier for each user")
     private Long userId;
+
+	@Column(name= "idempotency_key", nullable = false, updatable = false)
+	@Comment("Unique idempotency key for each user")
+	private String idempotencyKey;
 
     @Column(name = "user_name", nullable = false, length = 50)
 	@Comment("User name")
@@ -60,4 +67,14 @@ public class User implements Serializable {
 	@Column(name = "postal_code", nullable = false)
 	@Comment("User postalCode")
 	private Integer postalCode;
+
+	@Embedded
+	@AttributeOverrides({
+			@AttributeOverride(name = "createdBy", column = @Column(name = "created_by")),
+			@AttributeOverride(name = "createdDate", column = @Column(name = "created_date")),
+			@AttributeOverride(name = "updatedBy", column = @Column(name = "updated_by")),
+			@AttributeOverride(name = "updatedDate", column = @Column(name = "updated_date")),
+	})
+	@Comment("Auditing related fields")
+	private AuditHistoryDTO auditHistoryDTO  = new AuditHistoryDTO();
 }

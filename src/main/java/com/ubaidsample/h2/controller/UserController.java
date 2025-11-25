@@ -7,11 +7,16 @@
 
 package com.ubaidsample.h2.controller;
 
+import com.ubaidsample.h2.dto.request.PageRequestDTO;
+import com.ubaidsample.h2.dto.request.UserPartialUpdateRequestDTO;
 import com.ubaidsample.h2.dto.request.UserRequestDTO;
+import com.ubaidsample.h2.dto.response.PageResponseDTO;
 import com.ubaidsample.h2.dto.response.UserResponseDTO;
 import com.ubaidsample.h2.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -30,17 +34,31 @@ public class UserController {
 
     private final UserService service;
 
-    @Operation(summary = "Create new user")
-    @ApiResponse(responseCode = "201", description = "User created")
+    @Operation(
+            summary = "Create new resource",
+            description = "Creates a new resource with the provided information"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Resource created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid data provided"),
+            @ApiResponse(responseCode = "409", description = "Resource already exists")
+    })
     @PostMapping
-    public ResponseEntity<UserResponseDTO> save(@Valid @RequestBody UserRequestDTO request) {
+    public ResponseEntity<UserResponseDTO> save(
+            @Parameter(description = "Resource data to create")
+            @Valid @RequestBody UserRequestDTO request) {
         log.info("UserController -> save() called");
         var response = service.save(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @Operation(summary = "Get all users", description = "Retrieves all user profiles")
-    @ApiResponse(responseCode = "200", description = "User found")
+    @Operation(
+            summary = "Get all resources",
+            description = "Retrieves a list of all resources"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Resources retrieved successfully")
+    })
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> findAll() {
         log.info("UserController -> findAll() called");
@@ -48,39 +66,110 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "Get user by ID", description = "Retrieves a user profile")
-    @ApiResponse(responseCode = "200", description = "User found")
+    @Operation(
+            summary = "Get resource by ID",
+            description = "Retrieves a resource by its ID"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Resource found"),
+            @ApiResponse(responseCode = "404", description = "Resource not found")
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> findById(@PathVariable(value = "id") Long id) {
+    public ResponseEntity<UserResponseDTO> findById(
+            @Parameter(description = "ID of the resource to retrieve")
+            @PathVariable(value = "id") Long id) {
         log.info("UserController -> findById() called with ID: {}", id);
         var response = service.findById(id);
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "Update user by ID", description = "Updates a user profile")
-    @ApiResponse(responseCode = "200", description = "User updated")
+    @Operation(
+            summary = "Update resource by ID",
+            description = "Updates a resource entirely with the provided information"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Resource updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid resource data provided"),
+            @ApiResponse(responseCode = "404", description = "Resource not found")
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> update(@PathVariable Long id, @Valid @RequestBody UserRequestDTO request) {
+    public ResponseEntity<UserResponseDTO> update(
+            @Parameter(description = "ID of the resource to update")
+            @PathVariable Long id,
+            @Parameter(description = "Updated resource data")
+            @Valid @RequestBody UserRequestDTO request) {
         log.info("UserController -> update() called with ID: {}", id);
         var response = service.update(id, request);
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "Update user by ID", description = "Updates a user profile")
-    @ApiResponse(responseCode = "200", description = "User updated")
+    @Operation(
+            summary = "Partially update resource by ID",
+            description = "Updates specific fields of a resource"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Resource partially updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid resource data provided"),
+            @ApiResponse(responseCode = "404", description = "Resource not found")
+    })
     @PatchMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> partialUpdate(@PathVariable Long id, @Valid @RequestBody UserPartialUpdateRequestDTO updates) {
+    public ResponseEntity<UserResponseDTO> partialUpdate(
+            @Parameter(description = "ID of the resource to partially update")
+            @PathVariable Long id,
+            @Parameter(description = "Fields to update")
+            @Valid @RequestBody UserPartialUpdateRequestDTO updates) {
         log.info("UserController -> partialUpdate() called with ID: {}", id);
         var response = service.partialUpdate(id, updates);
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "Delete user by ID", description = "Deletes a user profile")
-    @ApiResponse(responseCode = "204", description = "User deleted")
+    @Operation(
+            summary = "Delete resource by ID",
+            description = "Performs a soft delete on a resource by ID"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Resource deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Resource not found")
+    })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable(value = "id") Long id) {
-        log.info("UserController -> deleteById() called with ID: {}", id);
-        service.delete(id);
+    public ResponseEntity<Void> softDeleteById(
+            @Parameter(description = "ID of the resource to delete")
+            @PathVariable(value = "id") Long id) {
+        log.info("UserController -> softDeleteById() called with ID: {}", id);
+        service.softDeleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(
+            summary = "Restore deleted resource by ID",
+            description = "Restores a previously soft-deleted resource"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Resource restored successfully"),
+            @ApiResponse(responseCode = "404", description = "Resource not found or not deleted")
+    })
+    @GetMapping("/restore/{id}")
+    public ResponseEntity<Void> restoreSoftDeleteById(
+            @Parameter(description = "ID of the resource to restore")
+            @PathVariable(value = "id") Long id) {
+        log.info("UserController -> restoreSoftDeleteById() called with ID: {}", id);
+        service.restoreSoftDeleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(
+            summary = "Search with pagination",
+            description = "Performs a paginated search on the provided criteria"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Resources retrieved successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters")
+    })
+    @PostMapping("/search")
+    public PageResponseDTO<UserResponseDTO> search(
+            @Parameter(description = "Pagination and filter criteria")
+            @RequestBody PageRequestDTO pageRequest) {
+        log.info("UserController -> search() called");
+        return service.search(pageRequest);
     }
 }

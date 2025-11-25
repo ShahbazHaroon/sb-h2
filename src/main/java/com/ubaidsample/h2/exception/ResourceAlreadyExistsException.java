@@ -12,17 +12,17 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.io.Serial;
 
-@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-public class MissingInputException extends RuntimeException {
+@ResponseStatus(value = HttpStatus.CONFLICT)
+public class ResourceAlreadyExistsException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public MissingInputException(String message){
+    public ResourceAlreadyExistsException(String message){
         super(message);
     }
 
-    public MissingInputException(String message, Throwable cause) {
+    public ResourceAlreadyExistsException(String message, Throwable cause) {
         super(message, cause);
     }
 }

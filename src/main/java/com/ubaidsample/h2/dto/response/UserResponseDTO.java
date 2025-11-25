@@ -8,17 +8,25 @@
 package com.ubaidsample.h2.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ubaidsample.h2.dto.common.AuditHistoryDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDate;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponseDTO {
 
     @JsonProperty("user_id")
     private Long userId;
+
+    @JsonProperty("idempotency_key")
+    private String idempotencyKey;
 
     @JsonProperty("user_name")
     private String userName;
@@ -34,4 +42,7 @@ public class UserResponseDTO {
 
     @JsonProperty("postal_code")
     private Integer postalCode;
+
+    @JsonProperty("auditHistoryDTO")
+    private AuditHistoryDTO auditHistoryDTO;
 }
