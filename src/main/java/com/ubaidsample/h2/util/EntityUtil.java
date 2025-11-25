@@ -7,6 +7,7 @@
 
 package com.ubaidsample.h2.util;
 
+import com.ubaidsample.h2.exception.ResourceNotFoundException;
 import jakarta.persistence.Id;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
@@ -24,7 +25,7 @@ public class EntityUtil {
                 .filter(f -> f.isAnnotationPresent(Id.class))
                 .findFirst()
                 .map(Field::getName)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "Entity " + entityClass.getSimpleName() + " does not have a field annotated with @Id"));
     }
 
