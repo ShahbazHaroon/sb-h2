@@ -25,6 +25,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -128,9 +129,6 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponseDTO findById(Long id) {
         log.info("UserService -> findById() called");
-        if (id == null) {
-            throw new MissingInputException("ID must not be null");
-        }
         // Fetch existing
         User entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Nothing found in the database with id " + id));
@@ -141,53 +139,42 @@ public class UserService {
     @Transactional
     public UserResponseDTO update(Long id, UserRequestDTO request) {
         log.info("UserService -> update() called");
-        if (id == null || request == null) {
-            throw new MissingInputException("ID and update info must not be null");
-        }
         // Fetch existing
         User entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Nothing found in the database with id " + id));
-        // Update fields
-        entity.setUserName(request.getUserName());
-        entity.setEmail(request.getEmail());
+        // Update and map all fields except password
+        modelMapper.map(request, entity);
         // Update password only if provided
-        if (request.getPassword() != null && !request.getPassword().isBlank()) {
-            entity.setPassword((request.getPassword()));
+        if (StringUtils.hasText(request.getPassword())) {
+            entity.setPassword(request.getPassword());
         }
-        entity.setDateOfBirth(request.getDateOfBirth());
-        entity.setDateOfLeaving(request.getDateOfLeaving());
-        entity.setPostalCode(request.getPostalCode());
-        // Save updated data
-        User repositoryResponse = repository.save(entity);
-        // Convert the entity to the DTO
-        return modelMapper.map(repositoryResponse, UserResponseDTO.class);
+        // Save the entity and convert it to the DTO
+        return modelMapper.map(repository.save(entity), UserResponseDTO.class);
     }
 
     @Transactional
     public UserResponseDTO partialUpdate(Long id, UserPartialUpdateRequestDTO updates) {
         log.info("UserService -> partialUpdate() called");
-        if (id == null || updates == null) {
-            throw new MissingInputException("ID and update info must not be null");
-        }
         // Fetch existing
         User entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Nothing found in the database with id " + id));
         // Apply updates only if they are present
         Optional.ofNullable(updates.getUserName()).ifPresent(entity::setUserName);
         Optional.ofNullable(updates.getEmail()).ifPresent(entity::setEmail);
-        Optional.ofNullable(updates.getPassword()).ifPresent(entity::setPassword);
+        // Update password only if provided and must not be blank
+        Optional.ofNullable(updates.getPassword())
+                .filter(StringUtils::hasText)
+                .ifPresent(entity::setPassword);
         Optional.ofNullable(updates.getDateOfBirth()).ifPresent(entity::setDateOfBirth);
         Optional.ofNullable(updates.getDateOfLeaving()).ifPresent(entity::setDateOfLeaving);
         Optional.ofNullable(updates.getPostalCode()).ifPresent(entity::setPostalCode);
-        // Save updated data
-        User repositoryResponse = repository.save(entity);
-        // Convert the entity to the DTO
-        return modelMapper.map(repositoryResponse, UserResponseDTO.class);
+        // Save the entity and convert it to the DTO
+        return modelMapper.map(repository.save(entity), UserResponseDTO.class);
     }
 
     @Transactional
-    public void softDeleteById(Long userId) {
-        log.info("UserService -> softDeleteById() called");
+    public void deactivate(Long userId) {
+        log.info("UserService -> deactivate() called");
         // Fetch existing
         repository.findById(userId).ifPresent(user -> {
             user.getAuditHistoryDTO().setDeleted(true);
@@ -197,8 +184,8 @@ public class UserService {
     }
 
     @Transactional
-    public void restoreSoftDeleteById(Long userId) {
-        log.info("UserService -> restoreSoftDeleteById() called");
+    public void activate(Long userId) {
+        log.info("UserService -> activate() called");
         // Fetch existing
         repository.findById(userId).ifPresent(user -> {
             user.getAuditHistoryDTO().setDeleted(false);
@@ -217,9 +204,6 @@ public class UserService {
     @Transactional
     public void delete(Long id) {
         log.info("UserService -> delete() called");
-        if (id == null) {
-            throw new MissingInputException("ID must not be null");
-        }
         if (!repository.existsById(id)) {
             throw new ResourceNotFoundException("Nothing found in the database with id " + id);
         }

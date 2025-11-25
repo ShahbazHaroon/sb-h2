@@ -18,15 +18,19 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @Slf4j
+@Validated
 @RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
@@ -49,7 +53,12 @@ public class UserController {
             @Valid @RequestBody UserRequestDTO request) {
         log.info("UserController -> save() called");
         var response = service.save(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.getUserId())
+                .toUri();
+        return ResponseEntity.created(location).body(response);
     }
 
     @Operation(
@@ -77,7 +86,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDTO> findById(
             @Parameter(description = "ID of the resource to retrieve")
-            @PathVariable(value = "id") Long id) {
+            @PathVariable(value = "id") @Positive Long id) {
         log.info("UserController -> findById() called with ID: {}", id);
         var response = service.findById(id);
         return ResponseEntity.ok(response);
@@ -95,7 +104,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> update(
             @Parameter(description = "ID of the resource to update")
-            @PathVariable Long id,
+            @PathVariable(value = "id") @Positive Long id,
             @Parameter(description = "Updated resource data")
             @Valid @RequestBody UserRequestDTO request) {
         log.info("UserController -> update() called with ID: {}", id);
@@ -115,9 +124,9 @@ public class UserController {
     @PatchMapping("/{id}")
     public ResponseEntity<UserResponseDTO> partialUpdate(
             @Parameter(description = "ID of the resource to partially update")
-            @PathVariable Long id,
+            @PathVariable(value = "id") @Positive Long id,
             @Parameter(description = "Fields to update")
-            @Valid @RequestBody UserPartialUpdateRequestDTO updates) {
+            @RequestBody UserPartialUpdateRequestDTO updates) {
         log.info("UserController -> partialUpdate() called with ID: {}", id);
         var response = service.partialUpdate(id, updates);
         return ResponseEntity.ok(response);
@@ -131,12 +140,12 @@ public class UserController {
             @ApiResponse(responseCode = "204", description = "Resource deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Resource not found")
     })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> softDeleteById(
+    @PatchMapping("/{id}/deactivate")
+    public ResponseEntity<Void> deactivate(
             @Parameter(description = "ID of the resource to delete")
-            @PathVariable(value = "id") Long id) {
-        log.info("UserController -> softDeleteById() called with ID: {}", id);
-        service.softDeleteById(id);
+            @PathVariable(value = "id") @Positive Long id) {
+        log.info("UserController -> deactivate() called with ID: {}", id);
+        service.deactivate(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -148,12 +157,12 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Resource restored successfully"),
             @ApiResponse(responseCode = "404", description = "Resource not found or not deleted")
     })
-    @GetMapping("/restore/{id}")
-    public ResponseEntity<Void> restoreSoftDeleteById(
+    @PatchMapping("/{id}/activate")
+    public ResponseEntity<Void> activate(
             @Parameter(description = "ID of the resource to restore")
-            @PathVariable(value = "id") Long id) {
-        log.info("UserController -> restoreSoftDeleteById() called with ID: {}", id);
-        service.restoreSoftDeleteById(id);
+            @PathVariable(value = "id") @Positive Long id) {
+        log.info("UserController -> activate() called with ID: {}", id);
+        service.activate(id);
         return ResponseEntity.ok().build();
     }
 

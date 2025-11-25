@@ -148,7 +148,7 @@ http://localhost:8080/sb-h2/api/v1/user/1
 ```
 - **Restore deleted resource by ID**
 ```bash
-http://localhost:8080/sb-h2/api/v1/user/1
+http://localhost:8080/sb-h2/api/v1/user/1/restore
 ```
 - **Search with pagination**
 ```bash

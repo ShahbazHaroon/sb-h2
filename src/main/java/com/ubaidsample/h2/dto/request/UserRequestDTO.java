@@ -22,37 +22,37 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class UserRequestDTO {
 
-    @NotBlank
+    @NotBlank(message="...")
     @Size(min = 4, max = 50)
     @JsonProperty("idempotency_key")
     private String idempotencyKey;
 
-    @NotBlank
+    @NotBlank(message="...")
     @Size(min = 4, max = 50)
     @JsonProperty("user_name")
     private String userName;
 
-    @NotBlank
+    @NotBlank(message="...")
     @Email
     @JsonProperty("email")
     private String email;
 
-    @NotBlank
+    @NotBlank(message="...")
     @Size(min = 4, max = 255)
     @JsonProperty("password")
     private String password;
 
-    @NotNull
+    @NotNull(message="...")
     @Past
     @JsonProperty("date_of_birth")
     private LocalDate dateOfBirth;
 
-    @NotNull
+    @NotNull(message="...")
     @Future
     @JsonProperty("date_of_leaving")
     private LocalDate dateOfLeaving;
 
-    @NotNull
+    @NotNull(message="...")
     @Digits(integer = 5, fraction = 0)
     @Positive
     @JsonProperty("postal_code")
