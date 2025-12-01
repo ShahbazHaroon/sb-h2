@@ -25,8 +25,7 @@ public class EntityUtil {
                 .filter(f -> f.isAnnotationPresent(Id.class))
                 .findFirst()
                 .map(Field::getName)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Entity " + entityClass.getSimpleName() + " does not have a field annotated with @Id"));
+                .orElseThrow(() -> new ResourceNotFoundException("Entity " + entityClass.getSimpleName() + " does not have a field annotated with @Id"));
     }
 
     /**

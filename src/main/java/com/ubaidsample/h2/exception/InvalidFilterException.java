@@ -12,13 +12,15 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.io.Serial;
 
-@ResponseStatus(value = HttpStatus.CONFLICT)
-public class ResourceAlreadyExistsException extends RuntimeException {
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public class InvalidFilterException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public ResourceAlreadyExistsException(String message){ super(message); }
+    public InvalidFilterException(String message) { super(message); }
 
-    public ResourceAlreadyExistsException(String message, Throwable cause) { super(message, cause);}
+    public InvalidFilterException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

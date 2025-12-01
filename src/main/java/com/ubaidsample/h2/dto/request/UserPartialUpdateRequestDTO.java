@@ -22,28 +22,28 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class UserPartialUpdateRequestDTO {
 
-    @Size(min = 4, max = 50)
+    @Size(min = 4, max = 50, message = "User name must be between 4 and 50 characters.")
     @JsonProperty("user_name")
     private String userName;
 
-    @Email
+    @Email(message = "Email address must be valid and follow standard email format.")
     @JsonProperty("email")
     private String email;
 
-    @Size(min = 4, max = 255)
+    @Size(min = 4, max = 255, message = "Password must be between 4 and 255 characters.")
     @JsonProperty("password")
     private String password;
 
-    @Past
+    @Past(message = "Date of birth must be in the past.")
     @JsonProperty("date_of_birth")
     private LocalDate dateOfBirth;
 
-    @Future
+    @Future(message = "Date of leaving must be in the future.")
     @JsonProperty("date_of_leaving")
     private LocalDate dateOfLeaving;
 
-    @Digits(integer = 5, fraction = 0)
-    @Positive
+    @Digits(integer = 5, fraction = 0, message = "Postal code must be a valid number with up to 5 digits and no decimals.")
+    @Positive(message = "Postal code must be a positive number.")
     @JsonProperty("postal_code")
     private Integer postalCode;
 }

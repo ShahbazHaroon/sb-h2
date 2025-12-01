@@ -22,39 +22,39 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class UserRequestDTO {
 
-    @NotBlank(message="...")
-    @Size(min = 4, max = 50)
+    @NotBlank(message = "Idempotency key is required and cannot be blank.")
+    @Size(min = 4, max = 50, message = "Idempotency key must be between 4 and 50 characters.")
     @JsonProperty("idempotency_key")
     private String idempotencyKey;
 
-    @NotBlank(message="...")
-    @Size(min = 4, max = 50)
+    @NotBlank(message = "User name is required and cannot be blank.")
+    @Size(min = 4, max = 50, message = "User name must be between 4 and 50 characters.")
     @JsonProperty("user_name")
     private String userName;
 
-    @NotBlank(message="...")
-    @Email
+    @NotBlank(message = "Email address is required and cannot be blank.")
+    @Email(message = "Email address must be valid and follow standard email format.")
     @JsonProperty("email")
     private String email;
 
-    @NotBlank(message="...")
-    @Size(min = 4, max = 255)
+    @NotBlank(message = "Password is required and cannot be blank.")
+    @Size(min = 4, max = 255, message = "Password must be between 4 and 255 characters.")
     @JsonProperty("password")
     private String password;
 
-    @NotNull(message="...")
-    @Past
+    @NotNull(message = "Date of birth is required and cannot be null.")
+    @Past(message = "Date of birth must be in the past.")
     @JsonProperty("date_of_birth")
     private LocalDate dateOfBirth;
 
-    @NotNull(message="...")
-    @Future
+    @NotNull(message = "Date of leaving is required and cannot be null.")
+    @Future(message = "Date of leaving must be in the future.")
     @JsonProperty("date_of_leaving")
     private LocalDate dateOfLeaving;
 
-    @NotNull(message="...")
-    @Digits(integer = 5, fraction = 0)
-    @Positive
+    @NotNull(message = "Postal code is required and cannot be null.")
+    @Digits(integer = 5, fraction = 0, message = "Postal code must be a valid number with up to 5 digits and no decimals.")
+    @Positive(message = "Postal code must be a positive number.")
     @JsonProperty("postal_code")
     private Integer postalCode;
 }

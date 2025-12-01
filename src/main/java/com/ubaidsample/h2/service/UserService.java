@@ -13,7 +13,6 @@ import com.ubaidsample.h2.dto.request.UserRequestDTO;
 import com.ubaidsample.h2.dto.response.PageResponseDTO;
 import com.ubaidsample.h2.dto.response.UserResponseDTO;
 import com.ubaidsample.h2.entity.User;
-import com.ubaidsample.h2.exception.MissingInputException;
 import com.ubaidsample.h2.exception.ResourceAlreadyExistsException;
 import com.ubaidsample.h2.exception.ResourceNotFoundException;
 import com.ubaidsample.h2.repository.UserRepository;
@@ -22,14 +21,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -40,6 +39,15 @@ public class UserService {
     private final UserRepository repository;
 
     private final ModelMapper modelMapper;
+
+    @Value("${minio.bucket}")
+    private String bucket;
+
+    @Value("${app.upload.allowed-types}")
+    private String allowedTypes;
+
+    @Value("${minio.presigned-url-expiry}")
+    private int profileImageUrlExpiry;
 
     @Transactional
     public UserResponseDTO save(UserRequestDTO request) {

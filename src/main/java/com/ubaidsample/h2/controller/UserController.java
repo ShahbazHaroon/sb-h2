@@ -80,7 +80,7 @@ public class UserController {
             description = "Retrieves a resource by its ID"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Resource found"),
+            @ApiResponse(responseCode = "200", description = "Resource retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Resource not found")
     })
     @GetMapping("/{id}")
@@ -137,7 +137,7 @@ public class UserController {
             description = "Performs a soft delete on a resource by ID"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Resource deleted successfully"),
+            @ApiResponse(responseCode = "204", description = "Resource deactivated successfully"),
             @ApiResponse(responseCode = "404", description = "Resource not found")
     })
     @PatchMapping("/{id}/deactivate")

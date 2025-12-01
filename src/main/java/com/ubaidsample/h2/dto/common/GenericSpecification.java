@@ -8,6 +8,7 @@
 package com.ubaidsample.h2.dto.common;
 
 import com.ubaidsample.h2.dto.request.FilterRequestDTO;
+import com.ubaidsample.h2.exception.InvalidFilterException;
 import com.ubaidsample.h2.util.EntityUtil;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -45,23 +46,23 @@ public class GenericSpecification<T> implements Specification<T> {
                 } else {
                     typedValue = EntityUtil.convertValue(fieldType, typedValue);
                 }
-                String op = f.getOperator().toLowerCase();
-                switch (op) {
+                String operator = f.getOperator().toLowerCase();
+                switch (operator) {
                     case "eq" -> predicates.add(cb.equal(path, typedValue));
                     case "ne" -> predicates.add(cb.notEqual(path, typedValue));
                     case "like" -> {
                         if (!String.class.isAssignableFrom(fieldType)) {
-                            throw new IllegalArgumentException("LIKE operator only applies to String fields: " + f.getField());
+                            throw new InvalidFilterException("LIKE operator only applies to String fields: " + f.getField());
                         }
                         predicates.add(cb.like((Expression<String>) path.as(String.class), "%" + typedValue + "%"));
                     }
                     case "lt", "lte", "gt", "gte" -> {
                         if (!Comparable.class.isAssignableFrom(fieldType)) {
-                            throw new IllegalArgumentException("Field " + f.getField() + " with operator " + op + " is not Comparable");
+                            throw new InvalidFilterException("Field " + f.getField() + " with operator " + operator + " is not Comparable");
                         }
                         Expression<? extends Comparable> exp = path.as((Class<? extends Comparable>) fieldType);
                         Comparable compValue = (Comparable) typedValue;
-                        switch (op) {
+                        switch (operator) {
                             case "lt" -> predicates.add(cb.lessThan(exp, compValue));
                             case "lte" -> predicates.add(cb.lessThanOrEqualTo(exp, compValue));
                             case "gt" -> predicates.add(cb.greaterThan(exp, compValue));
@@ -72,7 +73,7 @@ public class GenericSpecification<T> implements Specification<T> {
                         Collection<?> values = (typedValue instanceof Collection<?> col) ? col : List.of(typedValue);
                         predicates.add(path.in(values));
                     }
-                    default -> throw new IllegalArgumentException("Unsupported operator: " + op);
+                    default -> throw new InvalidFilterException("Unsupported operator: " + operator);
                 }
             }
         }

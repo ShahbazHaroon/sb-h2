@@ -84,14 +84,7 @@ jdbc:h2:mem:sb-h2-db
 ---
 ### Insert Sample Data
 ```sql
-INSERT INTO users 
-(user_id, idempotency_key, user_name, email, password, date_of_birth, date_of_leaving, postal_code, created_by, created_date, updated_by, updated_date)
-VALUES
-(1, 'IDEMP-001', 'john.doe', 'john@example.com', 'pass123', '1998-02-15', '2024-12-31', 56001, 'system', NOW(), 'system', NOW()),
-(2, 'IDEMP-002', 'alice.wonder', 'alice@example.com', 'pass123', '1990-07-22', '2024-12-31', 56002, 'system', NOW(), 'system', NOW()),
-(3, 'IDEMP-003', 'robert.smith', 'robert@example.com', 'pass123', '1985-01-11', '2024-12-31', 56001, 'system', NOW(), 'system', NOW()),
-(4, 'IDEMP-004', 'john.miller', 'jm@example.com', 'pass123', '1996-09-05', '2024-12-31', 56003, 'system', NOW(), 'system', NOW());
-ALTER TABLE USERS ALTER COLUMN user_id RESTART WITH 5;
+import.sql
 ```
 ---
 ### REST API Endpoints

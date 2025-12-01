@@ -20,6 +20,17 @@ import java.util.List;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(InvalidFilterException.class)
+    public ResponseEntity<ErrorDetails> invalidFilterException(InvalidFilterException ex, HttpServletRequest request) {
+        var error = new ErrorDetails(
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                new Date(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(MissingInputException.class)
     public ResponseEntity<ErrorDetails> missingInputException(MissingInputException ex, HttpServletRequest request) {
         var error = new ErrorDetails(
@@ -43,7 +54,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResourceAlreadyExistsException.class)
-    public ResponseEntity<ErrorDetails> resourceNotFoundException(ResourceAlreadyExistsException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorDetails> resourceAlreadyExistsException(ResourceAlreadyExistsException ex, HttpServletRequest request) {
         var error = new ErrorDetails(
                 ex.getMessage(),
                 HttpStatus.CONFLICT.value(),
@@ -68,9 +79,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(InvalidFileTypeException.class)
+    public ResponseEntity<ErrorDetails> invalidFileTypeException(InvalidFileTypeException ex, HttpServletRequest request) {
+        var error = new ErrorDetails(
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                new Date(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDetails> globalExceptionHandler(
-            Exception ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorDetails> globalExceptionHandler(Exception ex, HttpServletRequest request) {
         var error = new ErrorDetails(
                 ex.getMessage(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
