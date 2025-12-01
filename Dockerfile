@@ -32,6 +32,12 @@ COPY --from=builder /app/target/*.jar sb-h2.jar
 # Create non-root user (use fixed UID/GID for reproducibility)
 RUN groupadd -r spring && useradd -r -g spring spring
 
+# Create log directory and set ownership/permissions before switching user
+RUN mkdir -p /app/logs/sb-h2 && \
+    chown -R spring:spring /app/logs && \
+    chmod -R 755 /app/logs
+
+# Switch to non-root user
 USER spring
 
 # Expose the port your application will run on

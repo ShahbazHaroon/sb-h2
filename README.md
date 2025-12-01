@@ -52,7 +52,9 @@ Access: http://localhost:8080/sb-h2/swagger-ui/index.html or http://localhost:80
 ---
 ### Run the application with Docker:
 ```dockerfile
+# Build the Docker image
 docker build -t sb-h2 .
+# Run the container
 docker run --name sb-h2-container -p 8080:8080 sb-h2
 ```
 Access: http://localhost:8080/sb-h2/swagger-ui/index.html or http://localhost:8080/sb-h2/api/v1/status
