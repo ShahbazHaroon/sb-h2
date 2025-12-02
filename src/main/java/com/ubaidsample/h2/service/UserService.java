@@ -40,15 +40,6 @@ public class UserService {
 
     private final ModelMapper modelMapper;
 
-    @Value("${minio.bucket}")
-    private String bucket;
-
-    @Value("${app.upload.allowed-types}")
-    private String allowedTypes;
-
-    @Value("${minio.presigned-url-expiry}")
-    private int profileImageUrlExpiry;
-
     @Transactional
     public UserResponseDTO save(UserRequestDTO request) {
         log.info("UserService -> save() called with idempotencyKey={}", request.getIdempotencyKey());

@@ -63,6 +63,10 @@ Access: http://localhost:8080/sb-h2/swagger-ui/index.html or http://localhost:80
 ### Run the application with Docker Compose:
 ```dockerfile
 docker compose up --build
+# Connect to the running container
+docker exec -it sb-h2-container /bin/sh
+or
+docker exec -it sb-h2-container bash
 ```
 Access: http://localhost:8080/sb-h2/swagger-ui/index.html or http://localhost:8080/sb-h2/api/v1/status
 

@@ -20,6 +20,6 @@ public class AuditConfig {
 
     @Bean
     public AuditorAware<String> auditorProvider() {
-        return () -> Optional.of("SYSTEM");
+        return () -> Optional.of("system");
     }
 }
