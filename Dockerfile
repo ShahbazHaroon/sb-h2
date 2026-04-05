@@ -33,9 +33,9 @@ COPY --from=builder /app/target/*.jar sb-h2.jar
 RUN groupadd -r spring && useradd -r -g spring spring
 
 # Create log directory and set ownership/permissions before switching user
-RUN mkdir -p /app/logs/sb-h2 && \
-    chown -R spring:spring /app/logs && \
-    chmod -R 755 /app/logs
+RUN mkdir -p /var/log/apps/sb-h2 && \
+    chown -R spring:spring /var/log/apps && \
+    chmod -R 755 /var/log/apps
 
 # Switch to non-root user
 USER spring

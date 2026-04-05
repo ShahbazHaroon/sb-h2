@@ -29,7 +29,8 @@ public class CorsConfig {
                         .addMapping("/**")
 
                         // Use externalized configuration for flexibility
-                        .allowedOrigins(allowedOrigins)
+                        //.allowedOrigins(allowedOrigins)
+						.allowedOriginPatterns(allowedOrigins)
                         //.allowedOriginPatterns("http://*.example.com", "https://*.example.com")
 
                         // Allowed HTTP methods
